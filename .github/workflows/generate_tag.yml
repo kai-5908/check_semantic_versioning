@@ -1,0 +1,50 @@
+name: Generate Tag
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+    generate_tag:
+        name: 'Generate tag and Create Release'
+        runs-on: ubuntu-latest
+    
+        outputs:
+            next_version: ${{ steps.set_outputs.outputs.next_version }}
+        
+        steps:
+            - name: Checkout the repository
+              uses: actions/checkout@v3
+              with:
+                fetch-depth: 0
+            
+            - name: Create a new version
+              id: next_semantic_version
+              uses: paulhatch/semantic-version@5.0.2
+              with:
+                tag_prefix: 'v'
+                major_pattern: '[MAJOR]'
+                minor_pattern: '[MINOR]'
+                version_format: '${major}.${minor}.${patch}'
+                bump_each_commit: false
+                search_commit_body: false
+            
+            - name: Display the next version
+              run: echo ${{steps.next_semantic_version.outputs.version}}
+
+            - name: Create a release
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                gh release create ${{ steps.next_semantic_version.outputs.version }} \
+                  --generate-notes \
+                  --target ${{ github.ref_name }}
+                  --title "${{ steps.next_semantic_version.outputs.version }}"
+                
+            - name: Set env value to Output
+              id: set_outputs
+              run: echo "next_version=${{ steps.next_semantic_version.outputs.version }}"
