@@ -24,7 +24,7 @@ jobs:
             
             - name: Create a new version
               id: next_semantic_version
-              uses: paulhatch/semantic-version@5.0.2
+              uses: paulhatch/semantic-version@5.2.1
               with:
                 tag_prefix: 'v'
                 major_pattern: '[MAJOR]'
