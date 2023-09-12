@@ -28,10 +28,9 @@ jobs:
               uses: paulhatch/semantic-version@v5.2.1
               with:
                 tag_prefix: 'v'
-                branch: "main"
                 major_pattern: '[MAJOR]'
                 minor_pattern: '[MINOR]'
-                version_format: '${major}.${minor}.${patch}'
+                version_format: '$v{major}.${minor}.${patch}'
                 bump_each_commit: false
                 search_commit_body: false
             
